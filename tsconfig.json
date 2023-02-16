@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "outDir": "./dist",
+    "outDir": "dist",
     "module": "commonjs",                                /* Specify what module code is generated. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    "forceConsistentCasingInFileNames": true,
 
     "strict": true,                                      /* Enable all strict type-checking options. */
     "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
@@ -25,7 +25,14 @@
     "noPropertyAccessFromIndexSignature": true,       /* Enforces using indexed accessors for keys declared using an indexed type. */
     "allowUnusedLabels": true,                        /* Disable error reporting for unused labels. */
     "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+          "node_modules/*",
+          "src/types/*"            
+      ]
+  }                                   /* Skip type checking all .d.ts files. */
   },
   "include": ["index.ts"]
 }
