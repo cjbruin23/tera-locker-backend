@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import dotenv from "dotenv";
+import ErrorHandler from "./middleware/ErrorHandler";
 
 dotenv.config();
 const port = process.env["PORT"];
@@ -21,8 +22,16 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/files", (req: Request, res: Response) => {
-  console.log("get files", req);
-  res.send("You do have access to this resource");
+  try {
+    console.log("get files", req);
+    res.send("You do have access to this resource");
+  } catch (err) {
+    console.log("err", err);
+  }
+});
+
+app.use((err: Error, req: Request, res: Response) => {
+  ErrorHandler(err, req, res);
 });
 
 app.listen(port, () => {
