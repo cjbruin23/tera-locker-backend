@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
@@ -16,6 +16,10 @@ app.use(
   })
 );
 
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  ErrorHandler(err, req, res, next);
+});
+
 app.get("/", (req: Request, res: Response) => {
   console.log("req", req);
   res.send("Express + TypeScript Server");
@@ -28,10 +32,6 @@ app.get("/files", (req: Request, res: Response) => {
   } catch (err) {
     console.log("err", err);
   }
-});
-
-app.use((err: Error, req: Request, res: Response) => {
-  ErrorHandler(err, req, res);
 });
 
 app.listen(port, () => {

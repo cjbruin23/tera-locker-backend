@@ -1,12 +1,20 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import ResponseError from "../types/ResponseError";
 
-const ErrorHandler = (err: Error, req: Request, res: Response) => {
-  console.log("Middleware Error Hadnling", err, req);
-  //   const errStatus = err || 500;
+const ErrorHandler = (
+  err: ResponseError,
+  // @ts-ignore
+  req: Request,
+  res: Response,
+  // @ts-ignore
+  next: NextFunction
+) => {
+  console.log("Middleware Error Hadnling", err);
+  const errStatus = err.statusCode || 500;
   const errMsg = err.message || "Something went wrong";
   res.status(500).json({
     success: false,
-    status: "errStatus",
+    status: errStatus,
     message: errMsg,
   });
 };

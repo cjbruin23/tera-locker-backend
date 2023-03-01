@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy": "npm install && npm run build && npm run start:dev",
-    "start:dev": "npm run build && node .",
+    "start:dev": "npm run build && nodemon .",
     "build": "tsc"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
-    "@types/node": "^18.13.0"
+    "@types/node": "^18.13.0",
+    "nodemon": "^2.0.20"
   }
 }
