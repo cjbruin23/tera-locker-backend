@@ -3,11 +3,13 @@ import { auth } from "express-oauth2-jwt-bearer";
 import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
 
+const cors = require("cors");
+
 dotenv.config();
 const port = process.env["PORT"];
 
 const app = express();
-
+app.use(cors());
 // Right now, protecting all routes
 app.use(
   auth({
