@@ -7,7 +7,7 @@ dotenv.config();
 const cors = require("cors");
 
 const port = process.env["PORT"];
-const issuerBaseURL = `${process.env["AUTH0_DOMAIN"]}`;
+const issuerBaseURL = `https://${process.env["AUTH0_DOMAIN"]}`;
 const audience = `${process.env["AUTH0_AUDIENCE"]}`;
 console.log("issuer", issuerBaseURL, "audience", audience);
 const app = express();
