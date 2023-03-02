@@ -10,12 +10,15 @@ const ErrorHandler_1 = __importDefault(require("./middleware/ErrorHandler"));
 const cors = require("cors");
 dotenv_1.default.config();
 const port = process.env["PORT"];
+const issuerBaseURL = `${process.env["AUTH0_DOMAIN"]}`;
+const audience = `${process.env["AUTH0_AUDIENCE"]}`;
+console.log("issuer", issuerBaseURL, "audience", audience);
 const app = (0, express_1.default)();
 app.use(cors());
 // Right now, protecting all routes
 app.use((0, express_oauth2_jwt_bearer_1.auth)({
-    issuerBaseURL: `${process.env["AUTH0_DOMAIN"]}`,
-    audience: `${process.env["AUTH0_AUDIENCE"]}`,
+    issuerBaseURL,
+    audience,
 }));
 app.use((err, req, res, next) => {
     (0, ErrorHandler_1.default)(err, req, res, next);
