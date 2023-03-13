@@ -29,13 +29,16 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.get("/files", (req: Request, res: Response) => {
+app.get("/files", (_, res: Response) => {
   try {
-    console.log("get files", req);
     res.send("You do have access to this resource");
   } catch (err) {
     console.log("err", err);
   }
+});
+
+app.post("/file", (req: Request, _) => {
+  console.log("req", req);
 });
 
 app.listen(port, () => {
