@@ -2,15 +2,15 @@ import express, { NextFunction, Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
+const cors = require("cors");
 
 dotenv.config();
-const cors = require("cors");
 
 const port = process.env["PORT"];
 const issuerBaseURL = `https://${process.env["AUTH0_DOMAIN"]}`;
 const audience = `${process.env["AUTH0_AUDIENCE"]}`;
-console.log("issuer", issuerBaseURL, "audience", audience);
 const app = express();
+
 app.use(cors());
 // Right now, protecting all routes
 app.use(
