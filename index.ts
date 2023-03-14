@@ -2,7 +2,11 @@ import express, { NextFunction, Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
 import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
+import MulterRequest from "./types/MulterRequest";
+import multer from "multer";
+
 const cors = require("cors");
+const upload = multer({ dest: "uploads/" });
 
 dotenv.config();
 
@@ -37,9 +41,13 @@ app.get("/files", (_, res: Response) => {
   }
 });
 
-app.post("/file", (req: Request, res: Response) => {
-  console.log("req", req);
-  res.send("This was a success");
+app.post("/file", upload.single("file"), (req: Request, res: Response) => {
+  try {
+    console.log("req file", (req as MulterRequest).file);
+    res.send("This was a success");
+  } catch (err) {
+    console.log("err", err);
+  }
 });
 
 app.listen(port, () => {
