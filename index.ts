@@ -42,6 +42,7 @@ app.get("/files", (_, res: Response) => {
 });
 
 app.post("/file", upload.single("file"), (req: Request, res: Response) => {
+  // Need to delete the file after from disk after uploading it to cloud
   try {
     console.log("req file", (req as MulterRequest).file);
     res.send("This was a success");
