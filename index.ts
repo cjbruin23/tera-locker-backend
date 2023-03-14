@@ -37,8 +37,9 @@ app.get("/files", (_, res: Response) => {
   }
 });
 
-app.post("/file", (req: Request, _) => {
+app.post("/file", (req: Request, res: Response) => {
   console.log("req", req);
+  res.send("This was a success");
 });
 
 app.listen(port, () => {
