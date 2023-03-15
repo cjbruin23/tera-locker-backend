@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
+import { uploadToS3 } from "./utils/s3-engine";
 import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
 import MulterRequest from "./types/MulterRequest";
@@ -45,6 +46,7 @@ app.post("/file", upload.single("file"), (req: Request, res: Response) => {
   // Need to delete the file after from disk after uploading it to cloud
   try {
     console.log("req file", (req as MulterRequest).file);
+    uploadToS3("test.txt");
     res.send("This was a success");
   } catch (err) {
     console.log("err", err);
