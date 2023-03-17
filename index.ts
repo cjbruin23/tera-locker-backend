@@ -46,6 +46,10 @@ app.get("/files", (_, res: Response) => {
 app.post("/file", upload.single("file"), (req: Request, res: Response) => {
   try {
     const uploadedFile = (req as MulterRequest).file;
+    if (!uploadedFile) {
+      res.status(400).send("Must include file with request");
+      throw new Error("User did not add file to request");
+    }
     const originalFileName = uploadedFile.originalname;
     const fullFilePath = `${uploadedFile.path}`;
     uploadToS3(originalFileName, fullFilePath);
@@ -55,6 +59,7 @@ app.post("/file", upload.single("file"), (req: Request, res: Response) => {
     res.send(originalFileName + " file successfully uploaded");
   } catch (err) {
     console.log("err", err);
+    return;
   }
 });
 
