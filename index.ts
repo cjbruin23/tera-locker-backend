@@ -1,16 +1,22 @@
 import express, { NextFunction, Request, Response } from "express";
 import { auth } from "express-oauth2-jwt-bearer";
+import { uploadToS3 } from "./utils/s3-engine";
 import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
+import MulterRequest from "./types/MulterRequest";
+import multer from "multer";
+
+const cors = require("cors");
+const fs = require("fs");
+const upload = multer({ dest: "uploads/" });
 
 dotenv.config();
-const cors = require("cors");
 
 const port = process.env["PORT"];
 const issuerBaseURL = `https://${process.env["AUTH0_DOMAIN"]}`;
 const audience = `${process.env["AUTH0_AUDIENCE"]}`;
-console.log("issuer", issuerBaseURL, "audience", audience);
 const app = express();
+
 app.use(cors());
 // Right now, protecting all routes
 app.use(
@@ -29,10 +35,24 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.get("/files", (req: Request, res: Response) => {
+app.get("/files", (_, res: Response) => {
   try {
-    console.log("get files", req);
     res.send("You do have access to this resource");
+  } catch (err) {
+    console.log("err", err);
+  }
+});
+
+app.post("/file", upload.single("file"), (req: Request, res: Response) => {
+  try {
+    const uploadedFile = (req as MulterRequest).file;
+    const originalFileName = uploadedFile.originalname;
+    const fullFilePath = `${uploadedFile.path}`;
+    uploadToS3(originalFileName, fullFilePath);
+    fs.unlink(fullFilePath, () => {
+      console.log("successfully deleted file");
+    });
+    res.send(originalFileName + " file successfully uploaded");
   } catch (err) {
     console.log("err", err);
   }
