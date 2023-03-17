@@ -50,6 +50,7 @@ app.post("/file", upload.single("file"), (req: Request, res: Response) => {
       res.status(400).send("Must include file with request");
       throw new Error("User did not add file to request");
     }
+
     const originalFileName = uploadedFile.originalname;
     const fullFilePath = `${uploadedFile.path}`;
     uploadToS3(originalFileName, fullFilePath);
