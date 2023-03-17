@@ -45,8 +45,11 @@ app.get("/files", (_, res: Response) => {
 app.post("/file", upload.single("file"), (req: Request, res: Response) => {
   // Need to delete the file after from disk after uploading it to cloud
   try {
-    console.log("req file", (req as MulterRequest).file);
-    uploadToS3("test.txt");
+    const uploadedFile = (req as MulterRequest).file;
+    console.log("req file", uploadedFile);
+    const originalFileName = uploadedFile.originalname;
+    const fullFilePath = `${uploadedFile.path}`;
+    uploadToS3(originalFileName, fullFilePath);
     res.send("This was a success");
   } catch (err) {
     console.log("err", err);

@@ -1,4 +1,5 @@
-import { GetBucketTaggingCommand, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+const fs = require("fs");
 
 const createS3Client = () => {
   const s3Client = new S3Client({
@@ -11,16 +12,20 @@ const createS3Client = () => {
   return s3Client;
 };
 
-export const uploadToS3 = async (filename: string) => {
-  const bucketARN = `${process.env["S3_BUCKET"]}`;
-  console.log("bucketArn", bucketARN);
-  console.log("filename", filename);
+export const uploadToS3 = async (
+  originalFilename: string,
+  destination: string
+) => {
+  const bucketName = `${process.env["S3_BUCKET"]}`;
   const client = createS3Client();
 
-  const command = new GetBucketTaggingCommand({
-    Bucket: bucketARN,
-  });
-
-  const response = await client.send(command);
+  const input = {
+    Body: `${destination}`,
+    Key: `${originalFilename}`,
+    Bucket: `${bucketName}`,
+    ServerSideEnvryption: "AES256",
+  };
+  const putCommand = new PutObjectCommand(input);
+  const response = await client.send(putCommand);
   console.log("response", response);
 };
