@@ -1,5 +1,4 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-const fs = require("fs");
 
 const createS3Client = () => {
   const s3Client = new S3Client({

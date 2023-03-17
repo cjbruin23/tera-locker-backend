@@ -7,6 +7,7 @@ import MulterRequest from "./types/MulterRequest";
 import multer from "multer";
 
 const cors = require("cors");
+const fs = require("fs");
 const upload = multer({ dest: "uploads/" });
 
 dotenv.config();
@@ -43,14 +44,15 @@ app.get("/files", (_, res: Response) => {
 });
 
 app.post("/file", upload.single("file"), (req: Request, res: Response) => {
-  // Need to delete the file after from disk after uploading it to cloud
   try {
     const uploadedFile = (req as MulterRequest).file;
-    console.log("req file", uploadedFile);
     const originalFileName = uploadedFile.originalname;
     const fullFilePath = `${uploadedFile.path}`;
     uploadToS3(originalFileName, fullFilePath);
-    res.send("This was a success");
+    fs.unlink(fullFilePath, () => {
+      console.log("successfully deleted file");
+    });
+    res.send(originalFileName + " file successfully uploaded");
   } catch (err) {
     console.log("err", err);
   }
