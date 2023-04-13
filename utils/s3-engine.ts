@@ -16,7 +16,6 @@ export const uploadToS3 = async (
   destination: string
 ) => {
   const bucketName = `${process.env["S3_BUCKET"]}`;
-  const client = createS3Client();
 
   const input = {
     Body: `${destination}`,
@@ -24,7 +23,12 @@ export const uploadToS3 = async (
     Bucket: `${bucketName}`,
     ServerSideEnvryption: "AES256",
   };
-  const putCommand = new PutObjectCommand(input);
-  const response = await client.send(putCommand);
-  console.log("response", response);
+  try {
+    const client = createS3Client();
+    const putCommand = new PutObjectCommand(input);
+    await client.send(putCommand);
+  } catch (err) {
+    console.error("err to throw", err);
+    throw err;
+  }
 };

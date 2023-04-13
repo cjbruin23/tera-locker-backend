@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
 import MulterRequest from "./types/MulterRequest";
 import multer from "multer";
+import RequireMultipartContent from "./middleware/FileExtension";
 
 const cors = require("cors");
 const fs = require("fs");
@@ -18,6 +19,7 @@ const audience = `${process.env["AUTH0_AUDIENCE"]}`;
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 // Right now, protecting all routes
 app.use(
   auth({
@@ -43,9 +45,13 @@ app.get("/files", (_, res: Response) => {
   }
 });
 
-app.post("/file", upload.single("file"), (req: Request, res: Response) => {
-  try {
+app.post(
+  "/file",
+  upload.single("file"),
+  RequireMultipartContent,
+  (req: Request, res: Response) => {
     const uploadedFile = (req as MulterRequest).file;
+    // Want to make sure file is just a .csv, .txt or .json
     if (!uploadedFile) {
       res.status(400).send("Must include file with request");
       throw new Error("User did not add file to request");
@@ -58,11 +64,8 @@ app.post("/file", upload.single("file"), (req: Request, res: Response) => {
       console.log("successfully deleted file");
     });
     res.send(originalFileName + " file successfully uploaded");
-  } catch (err) {
-    console.log("err", err);
-    return;
   }
-});
+);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
