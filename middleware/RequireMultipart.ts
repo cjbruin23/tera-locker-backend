@@ -3,7 +3,6 @@ const RequireMultipartContent = (request, response, next) => {
   if (!rawContentType.includes("multipart/form-data")) {
     response.status(400).send("Server requires multipart/form-data");
   } else {
-    console.log("file is multipart-upload");
     next();
   }
 };

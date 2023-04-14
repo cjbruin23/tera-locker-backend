@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
 import MulterRequest from "./types/MulterRequest";
 import multer from "multer";
-import RequireMultipartContent from "./middleware/FileExtension";
+import RequireMultipartContent from "./middleware/RequireMultipart";
 import RequireFile from "./middleware/RequireFile";
 import compression from "compression";
 import cors from "cors";
