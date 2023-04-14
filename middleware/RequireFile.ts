@@ -5,7 +5,6 @@ const RequireFile = (req: Request, res: Response, next: NextFunction) => {
   const acceptedMimetypes = ["text/csv", "application/json"];
 
   const uploadedFile = (req as MulterRequest).file;
-  console.log("uplaodedFile", uploadedFile);
   if (!uploadedFile) {
     res.status(400).send("Must include file with request");
   }
