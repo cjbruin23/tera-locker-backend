@@ -7,13 +7,13 @@ import MulterRequest from "./types/MulterRequest";
 import multer from "multer";
 import RequireMultipartContent from "./middleware/FileExtension";
 import RequireFile from "./middleware/RequireFile";
-
-const cors = require("cors");
-const fs = require("fs");
-const upload = multer({ dest: "uploads/" });
+import compression from "compression";
+import cors from "cors";
+import fs from "fs";
 
 dotenv.config();
 
+const upload = multer({ dest: "uploads/" });
 const port = process.env["PORT"];
 const issuerBaseURL = `https://${process.env["AUTH0_DOMAIN"]}`;
 const audience = `${process.env["AUTH0_AUDIENCE"]}`;
@@ -21,6 +21,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(compression());
+
 // Right now, protecting all routes
 app.use(
   auth({
