@@ -23,12 +23,7 @@ export const uploadToS3 = async (
     Bucket: `${bucketName}`,
     ServerSideEnvryption: "AES256",
   };
-  try {
-    const client = createS3Client();
-    const putCommand = new PutObjectCommand(input);
-    await client.send(putCommand);
-  } catch (err) {
-    console.error("err to throw", err);
-    throw err;
-  }
+  const client = createS3Client();
+  const putCommand = new PutObjectCommand(input);
+  await client.send(putCommand);
 };

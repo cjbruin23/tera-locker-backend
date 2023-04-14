@@ -28,10 +28,6 @@ app.use(
   })
 );
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  ErrorHandler(err, req, res, next);
-});
-
 app.get("/", (req: Request, res: Response) => {
   console.log("req", req);
   res.send("Express + TypeScript Server");
@@ -49,7 +45,7 @@ app.post(
   "/file",
   upload.single("file"),
   RequireMultipartContent,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const uploadedFile = (req as MulterRequest).file;
     // Want to make sure file is just a .csv, .txt or .json
     if (!uploadedFile) {
@@ -59,13 +55,22 @@ app.post(
 
     const originalFileName = uploadedFile.originalname;
     const fullFilePath = `${uploadedFile.path}`;
-    uploadToS3(originalFileName, fullFilePath);
-    fs.unlink(fullFilePath, () => {
-      console.log("successfully deleted file");
-    });
-    res.send(originalFileName + " file successfully uploaded");
+
+    try {
+      await uploadToS3(originalFileName, fullFilePath);
+      fs.unlink(fullFilePath, () => {
+        console.log("successfully deleted file");
+      });
+      res.send(originalFileName + " file successfully uploaded");
+    } catch (err) {
+      next(err);
+    }
   }
 );
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  ErrorHandler(err, req, res, next);
+});
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
