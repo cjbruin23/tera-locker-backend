@@ -26,4 +26,5 @@ export const uploadToS3 = async (
   const client = createS3Client();
   const putCommand = new PutObjectCommand(input);
   await client.send(putCommand);
+  client.destroy();
 };

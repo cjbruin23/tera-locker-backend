@@ -6,6 +6,7 @@ import ErrorHandler from "./middleware/ErrorHandler";
 import MulterRequest from "./types/MulterRequest";
 import multer from "multer";
 import RequireMultipartContent from "./middleware/FileExtension";
+import RequireFile from "./middleware/RequireFile";
 
 const cors = require("cors");
 const fs = require("fs");
@@ -44,15 +45,10 @@ app.get("/files", (_, res: Response) => {
 app.post(
   "/file",
   upload.single("file"),
+  RequireFile,
   RequireMultipartContent,
   async (req: Request, res: Response, next: NextFunction) => {
     const uploadedFile = (req as MulterRequest).file;
-    // Want to make sure file is just a .csv, .txt or .json
-    if (!uploadedFile) {
-      res.status(400).send("Must include file with request");
-      throw new Error("User did not add file to request");
-    }
-
     const originalFileName = uploadedFile.originalname;
     const fullFilePath = `${uploadedFile.path}`;
 
