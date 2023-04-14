@@ -5,19 +5,24 @@ import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
 import MulterRequest from "./types/MulterRequest";
 import multer from "multer";
-
-const cors = require("cors");
-const fs = require("fs");
-const upload = multer({ dest: "uploads/" });
+import RequireMultipartContent from "./middleware/RequireMultipart";
+import RequireFile from "./middleware/RequireFile";
+import compression from "compression";
+import cors from "cors";
+import fs from "fs";
 
 dotenv.config();
 
+const upload = multer({ dest: "uploads/" });
 const port = process.env["PORT"];
 const issuerBaseURL = `https://${process.env["AUTH0_DOMAIN"]}`;
 const audience = `${process.env["AUTH0_AUDIENCE"]}`;
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+app.use(compression());
+
 // Right now, protecting all routes
 app.use(
   auth({
@@ -25,10 +30,6 @@ app.use(
     audience,
   })
 );
-
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  ErrorHandler(err, req, res, next);
-});
 
 app.get("/", (req: Request, res: Response) => {
   console.log("req", req);
@@ -43,25 +44,30 @@ app.get("/files", (_, res: Response) => {
   }
 });
 
-app.post("/file", upload.single("file"), (req: Request, res: Response) => {
-  try {
+app.post(
+  "/file",
+  upload.single("file"),
+  RequireFile,
+  RequireMultipartContent,
+  async (req: Request, res: Response, next: NextFunction) => {
     const uploadedFile = (req as MulterRequest).file;
-    if (!uploadedFile) {
-      res.status(400).send("Must include file with request");
-      throw new Error("User did not add file to request");
-    }
-
     const originalFileName = uploadedFile.originalname;
     const fullFilePath = `${uploadedFile.path}`;
-    uploadToS3(originalFileName, fullFilePath);
-    fs.unlink(fullFilePath, () => {
-      console.log("successfully deleted file");
-    });
-    res.send(originalFileName + " file successfully uploaded");
-  } catch (err) {
-    console.log("err", err);
-    return;
+
+    try {
+      await uploadToS3(originalFileName, fullFilePath);
+      fs.unlink(fullFilePath, () => {
+        console.log("successfully deleted file");
+      });
+      res.send(originalFileName + " file successfully uploaded");
+    } catch (err) {
+      next(err);
+    }
   }
+);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  ErrorHandler(err, req, res, next);
 });
 
 app.listen(port, () => {

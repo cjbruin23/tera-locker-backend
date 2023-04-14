@@ -6,11 +6,8 @@ const ErrorHandler = (
   // @ts-ignore
   req: Request,
   res: Response,
-  // @ts-ignore
-  next: NextFunction
+  _: NextFunction
 ) => {
-  console.log("Middleware Error Hadnling", err);
-  console.log("request", req.headers);
   const errStatus = err.statusCode || 500;
   const errMsg = err.message || "Something went wrong";
   res.status(500).json({
